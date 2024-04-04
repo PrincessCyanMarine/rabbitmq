@@ -20,7 +20,6 @@ export default (args: string[] | string, exchange = 'topic_logs', callback?: (co
 
                     channel.consume(q.queue, (msg) => {
                         if (!msg) return;
-                        console.log(msg);
                         console.log(" [x] Received %s:'%s'", msg.fields.routingKey, msg.content.toString());
                         callback?.(msg.content.toString(), msg);
                     }, {
