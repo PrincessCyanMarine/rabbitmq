@@ -1,0 +1,5 @@
+**-lock.**
+dist
+.env
+node_modules
+chat.log
