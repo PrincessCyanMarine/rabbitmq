@@ -2,12 +2,10 @@ console.log("Starting Discord Bot...");
 import { config } from "dotenv";
 config();
 
-const token = process.env.BOT_KRYSTAL_TOKEN;
-if (!token) throw "BOT_KRYSTAL_TOKEN is not defined in .env file";
-const webhookID = process.env.RabbitMQID;
-if (!webhookID) throw "RabbitMQID is not defined in .env file";
-const webhookToken = process.env.RabbitMQToken;
-if (!webhookToken) throw "RabbitMQToken is not defined in .env file";
+const { CHANNEL_ID, WEBHOOK_URL, BOT_TOKEN } = process.env;
+if (!BOT_TOKEN) throw "BOT_TOKEN is not defined in .env file";
+if (!WEBHOOK_URL) throw "WEBHOOK_URL is not defined in .env file";
+if (!CHANNEL_ID) throw "CHANNEL_ID is not defined in .env file";
 
 import recv from "./recv";
 import send from "./send";
@@ -24,22 +22,18 @@ const krystal = new Client({
 });
 
 
-var webhook = new WebhookClient({
-    id: webhookID,
-    token: webhookToken
-});
+var webhook = new WebhookClient({ url: WEBHOOK_URL });
 
 krystal.on('messageCreate', async (msg) => {
-    if (msg.channelId != '620635349173010474') return;
+    if (msg.channelId != CHANNEL_ID) return;
     if (msg.author.bot) return;
     send(JSON.stringify({
-            player: msg.author.displayName,
+            player: (msg.member || msg.author).displayName,
             content: msg.content
         }), 'chat.from.discord');
 });
 
-recv(['chat.from.*', 'chat.to.discord'], undefined, (content, msg) => {
-    if (msg.fields.routingKey == 'chat.from.discord') return;
+recv(['chat.from.minecraft', 'chat.to.discord', "chat.to.all"], undefined, (content, msg) => {
     const data = JSON.parse(content);
     console.log(`[chat.minecraft] ${data.player} sent \"${data.content}\"`);
     webhook?.send({
@@ -48,4 +42,4 @@ recv(['chat.from.*', 'chat.to.discord'], undefined, (content, msg) => {
     });
 });
 
-krystal.login(token);
+krystal.login(BOT_TOKEN);

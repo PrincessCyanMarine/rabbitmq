@@ -78,7 +78,7 @@ ws.on('connection', (socket) => {
 });
 
 recv(['chat.from.*', 'chat.to.*'], undefined, (content, msg) => {
-    console.log(`[chat.*] ${content}`);
+    console.log(`[${msg.fields.routingKey}] ${content}`);
     ws.emit('message', content);
 });
 

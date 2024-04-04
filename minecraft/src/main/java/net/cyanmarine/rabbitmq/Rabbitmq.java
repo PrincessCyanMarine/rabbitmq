@@ -35,7 +35,7 @@ public class Rabbitmq implements ModInitializer {
                 Messenger.send("{ \"player\": \"" + playerName + "\", \"content\": \"" + content + "\" }", "chat.from.minecraft");
             }
         });
-        Messenger.receive(new String[]{ "chat.to.minecraft", "chat.from.discord" });
+        Messenger.receive(new String[]{ "chat.to.minecraft", "chat.to.all", "chat.from.discord" });
         LOGGER.info("Initialized " + MOD_ID);
     }
 }
